@@ -6,7 +6,21 @@ Resources:
     Type: AWS::SageMaker::CodeRepository
     Properties:
       GitConfig:
-          RepositoryUrl: https://github.com/aws-samples/amazon-sagemaker-nlu-search
+          RepositoryUrl: https://github.com/OElesin/amazon-sagemaker-nlu-search
+
+#  BasicNotebookInstanceLifecycleConfig:
+#    Type: "AWS::SageMaker::NotebookInstanceLifecycleConfig"
+#    Properties:
+#      OnStart:
+#        - Content:
+#            Fn::Base64: |
+#              #!/bin/bash
+#              IDLE_TIME=3600
+#              echo "Fetching the autostop script"
+#              wget https://raw.githubusercontent.com/aws-samples/amazon-sagemaker-notebook-instance-lifecycle-config-samples/master/scripts/auto-stop-idle/autostop.py
+#
+#              echo "Starting the SageMaker autostop script in cron"
+#              (crontab -l 2>/dev/null; echo "5 * * * * /usr/bin/python $PWD/autostop.py --time $IDLE_TIME --ignore-connections") | crontab -
 
   NotebookInstance:
     Type: AWS::SageMaker::NotebookInstance
@@ -14,6 +28,7 @@ Resources:
       InstanceType: ml.t3.medium
       RoleArn: !GetAtt Role.Arn
       DefaultCodeRepository: !GetAtt CodeRepository.CodeRepositoryName
+      LifecycleConfigName: test-notebook-lifecycle
 
   Role:
     Type: AWS::IAM::Role
